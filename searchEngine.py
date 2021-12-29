@@ -103,7 +103,7 @@ class CpeSwFitter:
 
             print('d')
         indices_and_score = self.calc_similarity(qry).head(num_to_retrieve)
-        relevant_docs = self.parsed_xml.iloc[indices_and_score[0]][["cpe_items", "titles"]].reset_index(drop=True)
+        relevant_docs = self.parsed_xml.iloc[indices_and_score[0]][["cpe_items", "titles", "cpe_23_names"]].reset_index(drop=True)
         relevant_docs["sim_score"] = indices_and_score[1].iloc[:num_to_retrieve].reset_index(drop=True)
         return relevant_docs
 
@@ -116,11 +116,11 @@ class CpeSwFitter:
                 if relevant_docs.empty:
                     final_res.append([query, None, None, 0])
                 else:
-                    final_res.append([query, relevant_docs["cpe_items"].iloc[i], relevant_docs["titles"].iloc[i],
-                                    relevant_docs["sim_score"].iloc[i]])
+                    final_res.append([query, relevant_docs["cpe_items"].iloc[i], relevant_docs["titles"].iloc[i], relevant_docs["cpe_23_names"].iloc[i], relevant_docs["sim_score"].iloc[i]])
         final_res = pd.DataFrame(final_res)
-        final_res.columns = ["registry_sw", "cpe_items", "titles", "sim_score"]
+        final_res.columns = ["registry_sw", "cpe_items", "titles", "cpe_23_names", "sim_score"]
         final_res.to_csv('retrieved_{}.csv'.format(self.sim_func_name))
+        return final_res
         print(final_res)
         print("end")
 
