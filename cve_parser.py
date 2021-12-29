@@ -2,6 +2,7 @@ import download_db
 import json
 from cve import Cve
 from dataclasses import dataclass
+import os
 
 
 @dataclass()
@@ -17,6 +18,8 @@ class CveParser:
         :param year:
         :return: list of all cve for the given year. Each cell in the returning list is cve object
         """
+        # if not os.path.isfile('cve_collections_for_%s.json' % (str(year))):
+        #     self.write_all_cve_collection_for_specific_year_to_file(year)
         cve_collection = []
         cve_dict = self.cve_collections_for_all_years[year]
         for cve_json_presentation in cve_dict['CVE_Items']:
@@ -26,9 +29,12 @@ class CveParser:
                 assigner = cve_json_presentation['cve']['CVE_data_meta']['ASSIGNER']
             description = cve_json_presentation['cve']['description']['description_data'][0]['value']
             severity = None
+            cpe_match = []
+            for node in cve_json_presentation['configurations']['nodes']:
+                cpe_match += node['cpe_match']
             if len(cve_json_presentation['impact']) > 1:
                 severity = self.extract_severity(cve_json_presentation['impact'])
-            cve = Cve(cve_id, assigner, description, severity)
+            cve = Cve(cve_id, assigner, description, severity, cpe_match)
             cve_collection.append(cve)
 
         return cve_collection
@@ -46,7 +52,8 @@ class CveParser:
                 "identifier": cve.identifier,
                 "assigner": cve.assigner,
                 "description": cve.description,
-                "severity": cve.severity
+                "severity": cve.severity,
+                "cpe_match": cve.cpe_match
             }
             cve_json_collection.append(cve_json)
         json_object = json.dumps(cve_json_collection, indent=4)
