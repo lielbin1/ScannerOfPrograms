@@ -36,13 +36,14 @@ class DownloadDb:
         """
         r = requests.get('https://nvd.nist.gov/vuln/data-feeds#JSON_FEED')
         for filename in re.findall("nvdcve-1.1-[0-9]*\.json\.zip", r.text):
-            r_file = requests.get("https://nvd.nist.gov/feeds/json/cve/1.1/" + filename, stream=True)
+            print(filename)
+            r_file = requests.get("https://static.nvd.nist.gov/feeds/json/cve/1.1/" + filename, stream=True)
             with open("nvd/" + filename, 'wb') as f:
                 for chunk in r_file:
                     f.write(chunk)
 
 
-def download_file():
+def download_cpe_file():
     url = 'https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.zip'
     wget.download(url)
     # r_file = requests.get(source_url, stream=True)
