@@ -1,4 +1,4 @@
-#Weakness Vulnerability
+# Weakness Vulnerability
 ### A project as part of an internship at "Rezilion", cyber-security start-up.
 
 Vulnerability scanner for software installed on the computer in the Windows operating system.
